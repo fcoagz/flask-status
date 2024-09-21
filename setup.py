@@ -20,7 +20,7 @@ setup(
         '': ['flask_server_status/statsig/templates/*.html', 'flask_server_status/statsig/static/*'],
     },
     install_requires=[
-        'setuptools==75.1.0'
+        'setuptools==75.1.0',
         'flask>=3.0.0',
         'cachetools>=5.5.0',
         'apscheduler==3.10.4',
