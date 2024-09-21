@@ -17,6 +17,9 @@ def configure_flask_status():
         if not cache.get('API_SECRET'):
             return {'error': 'API is not enabled'}, 400
         
+        if not request.headers.get('Authorization').startswith('Bearer '):
+            return {'error': 'Invalid token'}, 400
+
         if request.headers.get('Authorization') != cache.get('API_SECRET'):
             return {'error': 'Unauthorized'}, 401
         

@@ -39,7 +39,11 @@ class FlaskStatus:
         if isinstance(app.config.get('API_ENABLED'), bool) and app.config.get('API_ENABLED') is True and app.config.get('API_SECRET'):
             from .routes.configure import route as configure
             
-            cache['API_SECRET'] = app.config.get('API_SECRET')
+            if app.config.get('API_SECRET').startswith('Bearer ') is False:
+                cache['API_SECRET'] = 'Bearer ' + app.config
+            else:
+                cache['API_SECRET'] = app.config.get('API_SECRET')
+            
             app.register_blueprint(configure, url_prefix='/flask-status')
         
         if not url_prefix:
