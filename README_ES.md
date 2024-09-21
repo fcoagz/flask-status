@@ -57,6 +57,33 @@ def index():
 
 La ruta por defecto es: `/status`
 
+## API
+
+FlaskStatus viene con una API incorporada para configurar las rutas que se generan en la base de datos.
+
+```
+app.config['API_ENABLED'] = True
+app.config['API_SECRET'] = 'tSx0L5exSjiPqqXs'
+```
+
+### Endpoints
+
+- `PUT /flask-status/configure`: Le permite modificar una ruta. `json={'rule': '/', 'name': 'Hello World!', 'doc': ''}`
+
+- `DELETE /flask-status/configure`: Le permite eliminar una ruta. `json={'rule': '/'}`
+
+### Ejemplo
+
+```py
+import requests
+
+r = requests.delete('http://127.0.0.1:5000/flask-status/configure', headers={
+    'Authorization': 'Bearer tSx0L5exSjiPqqXs'
+    }, json={
+    'rule': '/'
+})
+```
+
 ## Forked from 
 
 La página fue construida por Statsig's Open-Source Status Page.
