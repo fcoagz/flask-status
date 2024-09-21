@@ -12,4 +12,4 @@ class LogsSchema(Schema):
     id_route = fields.Integer()
     status_code = fields.Integer()
     message = fields.String()
-    time = fields.DateTime(format='%Y-%m-%d %H:%M:%S')
+    time = fields.DateTime(format='%Y-%m-%d %I:%M:%S')
