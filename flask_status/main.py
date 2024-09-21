@@ -11,8 +11,7 @@ from .utils.cron import background_log, get_logs
 class FlaskStatus:
     def __init__(self,
                  app: Flask = None, 
-                 routes: Optional[List[str]] = None, 
-                 timeout: Optional[int] = None, 
+                 routes: Optional[List[str]] = None,  
                  url_prefix: Optional[str] = None):
         """
         FlaskStatus
@@ -24,7 +23,7 @@ class FlaskStatus:
         """
         self.app = app
         if app is not None:
-            self.init_app(app, routes, timeout, url_prefix)
+            self.init_app(app, routes, url_prefix)
 
     def init_app(self,
                  app: Flask, 
