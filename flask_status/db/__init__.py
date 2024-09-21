@@ -15,6 +15,16 @@ def get_routes(session: Session, routes: Optional[List[str]] = None) -> List[Rou
         routes = session.query(Routes).filter(Routes.url.in_(routes)).all()
     return RoutesSchema().dump(routes, many=True)
 
+def get_route(session: Session, route: str) -> Routes:
+    """
+    Get a route
+
+    :param session: sqlalchemy session
+    :param route: route
+    """
+    route = session.query(Routes).filter(Routes.url == route).first()
+    return route
+
 def get_logs(session: Session) -> List[Logs]:
     """
     Get all logs

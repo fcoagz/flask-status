@@ -5,9 +5,15 @@ from werkzeug.utils import import_string
 from sqlalchemy.orm import Session
 
 from .cache import cache
+from ..db.models import Routes as Route
 from ..handler_logs import log_file
 from ..utils.logs import parse_log_entry
-from ..db import create_route, create_log, get_routes as _get_routes_, get_logs as _get_logs_
+from ..db import (
+    create_route, 
+    create_log, 
+    get_routes as _get_routes_, 
+    get_route as _get_route_
+)
 
 def get_logs() -> None:
     """
@@ -29,7 +35,7 @@ def get_routes(app: Flask, session: Session) -> List[dict]:
     :param session: sqlalchemy session
     :param routes: list of routes
     """
-    monitore_routes =  []
+    monitore_routes = []
     for rule in app.url_map.iter_rules():
         if rule.endpoint not in ['static', 'flask_logs']:
             if hasattr(app.view_functions[rule.endpoint], 'import_name'):
@@ -58,6 +64,12 @@ def get_routes(app: Flask, session: Session) -> List[dict]:
     get_db_routes = _get_routes_(session)
     urls_found = [] if not get_db_routes else [route['url'] for route in get_db_routes]
     for route in monitore_routes:
+        _i = _get_route_(session, route['url'])
+        if _i and (_i.name != route['name'] or _i.doc != route['doc']):
+            _i.name = route['name']
+            _i.doc = route['doc']
+            session.commit()
+
         if route['url'] not in urls_found:
             create_route(session, route)
     return _get_routes_(session)
