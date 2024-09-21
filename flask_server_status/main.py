@@ -52,8 +52,8 @@ class FlaskStatus:
         if url_prefix.startswith('/') is False:
             self.url_prefix = '/' + url_prefix
         
-        app.template_folder = 'flask_status/statsig/templates'
-        app.static_folder   = 'flask_status/statsig/static'
+        app.template_folder = 'flask_server_status/statsig/templates'
+        app.static_folder   = 'flask_server_status/statsig/static'
 
         engine = get_engine(cache['SQLALCHEMY_DATABASE_URI'])
         create_tables(engine)
