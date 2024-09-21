@@ -20,12 +20,14 @@ def configure_flask_status():
         rule = data.get('rule')
         if rule:
             delete_route(rule)
+            return {'message': 'Route deleted'}, 200
         else:
             return {'error': 'No rule provided'}, 400
         
     elif request.method == 'PUT': # modify route
         rule = data.pop('rule', None)
         if rule:
-            modify_route(rule, data)
+            route = modify_route(rule, data)
+            return {'message': 'Route modified', 'route': route}, 200
         else:
             return {'error': 'No rule provided'}, 400
