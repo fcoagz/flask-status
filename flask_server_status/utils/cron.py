@@ -39,7 +39,7 @@ def get_routes(app: Flask, session: Session) -> List[dict]:
             if hasattr(app.view_functions[rule.endpoint], 'import_name'):
                 import_name = app.view_functions[rule.endpoint].import_name
                 obj = import_string(import_name)
-                docstring = str(obj.__doc__) or '# Unknown'
+                docstring = str(obj.__doc__ or '# Unknown')
                 name = re.findall(r'# (.*)', docstring)[0]
                 doc = re.sub(r'# (.*)', '', docstring).strip()
 
@@ -49,7 +49,7 @@ def get_routes(app: Flask, session: Session) -> List[dict]:
                     'doc': doc
                 })
             else:
-                docstring = str(app.view_functions[rule.endpoint].__doc__) or '# Unknown'
+                docstring = str(app.view_functions[rule.endpoint].__doc__ or '# Unknown')
                 name = re.findall(r'# (.*)', docstring)[0]
                 doc = re.sub(r'# (.*)', '', docstring).strip()
 
