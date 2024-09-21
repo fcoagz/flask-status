@@ -5,7 +5,7 @@ HERE = pathlib.Path(__file__).parent
 
 setup(
     name='flask-server-status',
-    version='0.0.2',
+    version='0.0.3',
     url='https://github.com/fcoagz/flask-status/',
     license='MIT',
     author='Francisco Griman',
@@ -16,6 +16,9 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     platforms='any',
+    package_data={
+        '': ['flask_server_status/statsig/templates/*.html', 'flask_server_status/statsig/static/*'],
+    },
     install_requires=[
         'flask>=3.0.0',
         'cachetools>=5.5.0',
