@@ -29,16 +29,12 @@ class FlaskStatus:
     def init_app(self,
                  app: Flask, 
                  routes: Optional[List[str]] = None, 
-                 timeout: Optional[int] = None, 
                  url_prefix: Optional[str] = None):
         self.app = app
 
         if not app.config.get('SQLALCHEMY_DATABASE_URI'):
             app.logger.warning('SQLALCHEMY_DATABASE_URI is not set in app.config. Using default sqlite:///tmp/status.db')
         
-        if not timeout:
-            timeout = 5
-
         if not url_prefix:
             url_prefix = '/status'
         
@@ -54,7 +50,7 @@ class FlaskStatus:
 
         scheduler = BackgroundScheduler()
         scheduler.add_job(get_logs, 'interval', seconds=2)
-        scheduler.add_job(background_log, 'interval', args=[app, session, routes], minutes=timeout)
+        scheduler.add_job(background_log, 'cron', args=[app, session, routes], minute='*')
         scheduler.start()
 
         if not hasattr(app, 'extensions'):
