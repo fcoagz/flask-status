@@ -1,3 +1,4 @@
+import pkg_resources
 from typing import List, Optional
 from flask import Flask, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -52,8 +53,8 @@ class FlaskStatus:
         if url_prefix.startswith('/') is False:
             self.url_prefix = '/' + url_prefix
         
-        app.template_folder = 'flask_server_status/statsig/templates'
-        app.static_folder   = 'flask_server_status/statsig/static'
+        app.template_folder = pkg_resources.resource_filename('flask_server_status', 'statsig/templates')
+        app.static_folder   = pkg_resources.resource_filename('flask_server_status', 'statsig/static')
 
         engine = get_engine(cache['SQLALCHEMY_DATABASE_URI'])
         create_tables(engine)
