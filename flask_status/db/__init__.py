@@ -57,3 +57,35 @@ def create_log(session: Session, log: dict) -> Logs:
     session.add(new_log)
     session.commit()
     return new_log
+
+def modify_route(session: Session, route: str, data: dict) -> Routes:
+    """
+    Modify a route
+
+    :param session: sqlalchemy session
+    :param route: route
+    :param data: new route schema
+    """
+    route = session.query(Routes).filter(Routes.url == route).first()
+    if route:
+        for key, value in data.items():
+            setattr(route, key, value)
+        session.commit()
+        return RoutesSchema().dump(route)
+    else:
+        raise ValueError(f'Route {route} not found')
+
+def delete_route(session: Session, route: str) -> None:
+    """
+    Delete a route
+
+    :param session: sqlalchemy session
+    :param route: route
+    """
+    route = session.query(Routes).filter(Routes.url == route).first()
+    if route:
+        session.query(Logs).filter(Logs.id_route == route.id).delete()
+        session.delete(route)
+        session.commit()
+    else:
+        raise ValueError(f'Route {route} not found')
