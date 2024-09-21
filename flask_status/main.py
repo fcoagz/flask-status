@@ -34,6 +34,14 @@ class FlaskStatus:
         if not app.config.get('SQLALCHEMY_DATABASE_URI'):
             app.logger.warning('SQLALCHEMY_DATABASE_URI is not set in app.config. Using default sqlite:///tmp/status.db')
         
+        cache['SQLALCHEMY_DATABASE_URI'] = app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///tmp/status.db')
+
+        if isinstance(app.config.get('API_ENABLED'), bool) and app.config.get('API_ENABLED') is True and app.config.get('API_SECRET'):
+            from .routes.configure import route as configure
+            
+            cache['API_SECRET'] = app.config.get('API_SECRET')
+            app.register_blueprint(configure, url_prefix='/flask-status')
+        
         if not url_prefix:
             url_prefix = '/status'
         
@@ -43,7 +51,7 @@ class FlaskStatus:
         app.template_folder = 'flask_status/statsig/templates'
         app.static_folder   = 'flask_status/statsig/static'
 
-        engine = get_engine(app.config.get('SQLALCHEMY_DATABASE_URI', 'sqlite:///tmp/status.db'))
+        engine = get_engine(cache['SQLALCHEMY_DATABASE_URI'])
         create_tables(engine)
         session = sessionmaker(bind=engine)()
 
