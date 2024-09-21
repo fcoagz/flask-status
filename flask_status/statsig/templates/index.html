@@ -2,13 +2,13 @@
   <head>
     <title>Status Page</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" href="index.css" />
-    <script src="index.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}" />
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
   </head>
   <body>
     <div class="pageContainer">
       <div class="headline">
-        <img src="logo.svg" alt="Logo" width="200px" />
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo" width="200px" />
         <span> System Status </span>
       </div>
       <div id="reports" class="reportContainer"></div>
@@ -43,6 +43,10 @@
       </div>
     </div>
     <footer>
+      Powered by 
+      <a href="https://github.com/fcoagz/statuspage"
+        >FlaskStatus</a>.
+      <br>
       Forked from
       <a href="https://github.com/statsig-io/statuspage/"
         >Statsig's Open-Source Status Page</a
@@ -50,6 +54,8 @@
     </footer>
   </body>
   <script>
-    genAllReports();
+    const response = {{ response | safe }};
+    console.log(response);
+    genAllReports(response);
   </script>
 </html>

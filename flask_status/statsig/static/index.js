@@ -1,21 +1,20 @@
 const maxDays = 30;
 
-async function genReportLog(container, key, url) {
-  const response = await fetch("logs/" + key + "_report.log");
-  let statusLines = "";
-  if (response.ok) {
-    statusLines = await response.text();
+async function genReportLog(container, title, url, logs) {
+  let stringStatus = "";
+  for (let i = 0; i < logs.length; i++) {
+    stringStatus += `${logs[i].time}, ${logs[i].message} \n`;
   }
 
-  const normalized = normalizeData(statusLines);
-  const statusStream = constructStatusStream(key, url, normalized);
+  const normalized = normalizeData(stringStatus);
+  const statusStream = constructStatusStream(title, url, normalized);
   container.appendChild(statusStream);
 }
 
-function constructStatusStream(key, url, uptimeData) {
+function constructStatusStream(title, url, uptimeData) {
   let streamContainer = templatize("statusStreamContainerTemplate");
   for (var ii = maxDays - 1; ii >= 0; ii--) {
-    let line = constructStatusLine(key, ii, uptimeData[ii]);
+    let line = constructStatusLine(title, ii, uptimeData[ii]);
     streamContainer.appendChild(line);
   }
 
@@ -23,7 +22,7 @@ function constructStatusStream(key, url, uptimeData) {
   const color = getColor(lastSet);
 
   const container = templatize("statusContainerTemplate", {
-    title: key,
+    title: title,
     url: url,
     color: color,
     status: getStatusText(color),
@@ -34,11 +33,11 @@ function constructStatusStream(key, url, uptimeData) {
   return container;
 }
 
-function constructStatusLine(key, relDay, upTimeArray) {
+function constructStatusLine(title, relDay, upTimeArray) {
   let date = new Date();
   date.setDate(date.getDate() - relDay);
 
-  return constructStatusSquare(key, date, upTimeArray);
+  return constructStatusSquare(title, date, upTimeArray);
 }
 
 function getColor(uptimeVal) {
@@ -51,15 +50,15 @@ function getColor(uptimeVal) {
     : "partial";
 }
 
-function constructStatusSquare(key, date, uptimeVal) {
+function constructStatusSquare(title, date, uptimeVal) {
   const color = getColor(uptimeVal);
   let square = templatize("statusSquareTemplate", {
     color: color,
-    tooltip: getTooltip(key, date, color),
+    tooltip: getTooltip(title, date, color),
   });
 
   const show = () => {
-    showTooltip(square, key, date, color);
+    showTooltip(square, title, date, color);
   };
   square.addEventListener("mouseover", show);
   square.addEventListener("mousedown", show);
@@ -99,8 +98,8 @@ function applyTemplateSubstitutions(node, parameters) {
 
 function templatizeString(text, parameters) {
   if (parameters) {
-    for (const [key, val] of Object.entries(parameters)) {
-      text = text.replaceAll("$" + key, val);
+    for (const [title, val] of Object.entries(parameters)) {
+      text = text.replaceAll("$" + title, val);
     }
   }
   return text;
@@ -130,9 +129,9 @@ function getStatusDescriptiveText(color) {
     : "Unknown";
 }
 
-function getTooltip(key, date, quartile, color) {
+function getTooltip(title, date, quartile, color) {
   let statusText = getStatusText(color);
-  return `${key} | ${date.toDateString()} : ${quartile} : ${statusText}`;
+  return `${title} | ${date.toDateString()} : ${quartile} : ${statusText}`;
 }
 
 function create(tag, className) {
@@ -147,12 +146,12 @@ function normalizeData(statusLines) {
 
   let relativeDateMap = {};
   const now = Date.now();
-  for (const [key, val] of Object.entries(dateNormalized)) {
-    if (key == "upTime") {
+  for (const [title, val] of Object.entries(dateNormalized)) {
+    if (title == "upTime") {
       continue;
     }
 
-    const relDays = getRelativeDays(now, new Date(key).getTime());
+    const relDays = getRelativeDays(now, new Date(title).getTime());
     relativeDateMap[relDays] = getDayAverage(val);
   }
 
@@ -211,7 +210,7 @@ function splitRowsByDate(rows) {
 }
 
 let tooltipTimeout = null;
-function showTooltip(element, key, date, color) {
+function showTooltip(element, title, date, color) {
   clearTimeout(tooltipTimeout);
   const toolTipDiv = document.getElementById("tooltip");
 
@@ -236,17 +235,12 @@ function hideTooltip() {
   }, 1000);
 }
 
-async function genAllReports() {
-  const response = await fetch("urls.cfg");
-  const configText = await response.text();
-  const configLines = configText.split("\n");
-  for (let ii = 0; ii < configLines.length; ii++) {
-    const configLine = configLines[ii];
-    const [key, url] = configLine.split("=");
-    if (!key || !url) {
-      continue;
-    }
+async function genAllReports(reports) {
+  for (let i = 0; i < reports.length; i++) {
+    const report = reports[i];
+    const [name, url] = [report.name, report.url]
+    const logs = report.logs;
 
-    await genReportLog(document.getElementById("reports"), key, url);
+    await genReportLog(document.getElementById("reports"), name, url, logs);
   }
 }
