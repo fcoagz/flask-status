@@ -1,2 +1,2 @@
-include flask_status/statsig/static/*
-include flask_status/statsig/templates/*
+include flask_server_status/statsig/static/*
+include flask_server_status/statsig/templates/*

@@ -31,7 +31,7 @@ Some of the HTTP states that the server takes into account are:
 
 ```py
 from flask import Flask
-from flask_status import FlaskStatus
+from flask_server_status import FlaskStatus
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tmp/status.db'

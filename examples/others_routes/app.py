@@ -1,5 +1,5 @@
 from flask import Flask
-from flask_status import FlaskStatus
+from flask_server_status import FlaskStatus
 from routes.hello import hello
 from routes.bye import bye
 
