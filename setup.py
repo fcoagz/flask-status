@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 HERE = pathlib.Path(__file__).parent
 
 setup(
-    name='flaskstatus',
+    name='flask-server-status',
     version='0.0.1',
     url='https://github.com/fcoagz/flask-status/',
     license='MIT',
