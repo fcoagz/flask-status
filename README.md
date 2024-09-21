@@ -25,6 +25,12 @@ Some of the HTTP states that the server takes into account are:
 
 - `504 Gateway Timeout`: Indicates that the server has not received a timely response from an upstream server, which may indicate connectivity problems.
 
+## Install
+
+```sh
+pip install flask-server-status
+```
+
 ## Use
 
 - Import and configure FlaskStatus in your Flask application. You need a database to record the logs.
