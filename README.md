@@ -4,7 +4,7 @@
 
 It is a Flask extension to view incidents caused by the server.
 
-<img src="https://github.com/fcoagz/statuspage/blob/main/assets/dashboard.png?raw=true" style="border-radius: 10px;">
+![Example Status](https://github.com/fcoagz/statuspage/blob/main/assets/dashboard.png?raw=true)
 
 This is handled based on the requests that users make. Captures the server response and uses the conditional expression to quickly classify whether the request was successful or failed.
 
@@ -15,6 +15,7 @@ This is handled based on the requests that users make. Captures the server respo
 Some of the HTTP states that the server takes into account are:
 
 - `200 OK`: Indicates that the request has been completed successfully.
+
 - `404 Not Found`: Indicates that the requested resource is not available on the server.
 
 - `500 Internal Server Error`: Indicates that an internal server error has occurred while processing the client request.
@@ -50,6 +51,12 @@ You can configure which routes you want to be shown:
 FlaskStatus(app, routes=['/'])
 ```
 
+The default path is: `/status`. Although you can configure the route.
+
+```py
+FlaskStatus(app, url_prefix='/status')
+```
+
 - Define routes. The use of docstring. It will be used to define the route name. `# <ROUTE NAME>`
 
 ```py
@@ -61,7 +68,7 @@ def index():
     return 'Welcome to API!', 200 # 200 is the status code
 ```
 
-The default path is: `/status`
+In case you have not defined the route name. By default, it will take the name of the endpoint role.
 
 ## API
 
