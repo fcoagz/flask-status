@@ -7,7 +7,7 @@ setup(
     name='flask-server-status',
     version='0.0.4',
     url='https://github.com/fcoagz/flask-status/',
-    license='MIT',
+    license='ISC',
     author='Francisco Griman',
     author_email='grihardware@gmail.com',
     description='It is a Flask extension to view incidents caused by the server',
@@ -28,6 +28,7 @@ setup(
         'marshmallow==3.22.0',
     ],
     classifiers=[
+        'Framework :: Flask',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.12',
