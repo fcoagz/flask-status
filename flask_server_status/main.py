@@ -55,7 +55,7 @@ class FlaskStatus:
         from .utils.cron import background_log, get_logs
 
         scheduler = BackgroundScheduler()
-        scheduler.add_job(get_logs, 'interval', seconds=2)
+        scheduler.add_job(get_logs, 'interval', seconds=5)
         scheduler.add_job(background_log, 'cron', args=[app, routes], minute='*')
         scheduler.start()
 
