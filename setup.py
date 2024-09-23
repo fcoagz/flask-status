@@ -5,7 +5,7 @@ HERE = pathlib.Path(__file__).parent
 
 setup(
     name='flask-server-status',
-    version='0.0.3',
+    version='0.0.4',
     url='https://github.com/fcoagz/flask-status/',
     license='MIT',
     author='Francisco Griman',
