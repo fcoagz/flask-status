@@ -1,12 +1,8 @@
 from flask import Blueprint, request
-from sqlalchemy.orm import sessionmaker
 from ..db import modify_route, delete_route
-from ..db.engine import get_engine
 from ..utils.cache import cache
 
 route = Blueprint('flask_status_configure', __name__)
-engine = get_engine(str(cache.get('SQLALCHEMY_DATABASE_URI')))
-session = sessionmaker(bind=engine)()
 
 @route.route('/configure', methods=['DELETE', 'PUT'])
 def configure_flask_status():
@@ -27,7 +23,7 @@ def configure_flask_status():
         if request.method == 'DELETE': # Delete route
             rule = data.get('rule')
             if rule:
-                delete_route(session, rule)
+                delete_route(rule)
                 return {'message': 'Route deleted'}, 200
             else:
                 return {'error': 'No rule provided'}, 400
@@ -35,7 +31,7 @@ def configure_flask_status():
         elif request.method == 'PUT': # modify route
             rule = data.pop('rule', None)
             if rule:
-                route = modify_route(session, rule, data)
+                route = modify_route(rule, data)
                 return {'message': 'Route modified', 'route': route}, 200
             else:
                 return {'error': 'No rule provided'}, 400
