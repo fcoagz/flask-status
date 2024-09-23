@@ -15,7 +15,6 @@ class FlaskStatus:
 
         :param app: Flask app
         :param routes: List of routes to be monitored
-        :param timeout: Time in seconds to update the logs. Default is 5 minutes
         :param url_prefix: URL prefix to access the logs. Default is '/status'
         """
         self.app = app
