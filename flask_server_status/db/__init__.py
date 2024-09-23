@@ -1,13 +1,14 @@
 from typing import List, Optional
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import sessionmaker
+from .engine import engine
 from .models import Logs, Routes
 from .schemas import RoutesSchema, LogsSchema
 
-def get_routes(session: Session, routes: Optional[List[str]] = None) -> List[RoutesSchema]:
+session = sessionmaker(bind=engine)()
+
+def get_routes(routes: Optional[List[str]] = None) -> List[RoutesSchema]:
     """
     Get all routes
-
-    :param session: sqlalchemy session
     """
     if routes is None:
         routes = session.query(Routes).all()
@@ -15,42 +16,40 @@ def get_routes(session: Session, routes: Optional[List[str]] = None) -> List[Rou
         routes = session.query(Routes).filter(Routes.url.in_(routes)).all()
     return RoutesSchema().dump(routes, many=True)
 
-def get_route(session: Session, route: str) -> Routes:
+def get_route(route: str) -> Routes:
     """
     Get a route
 
-    :param session: sqlalchemy session
     :param route: route
     """
     route = session.query(Routes).filter(Routes.url == route).first()
     return route
 
-def get_logs(session: Session) -> List[Logs]:
+def get_logs() -> List[Logs]:
     """
     Get all logs
-
-    :param session: sqlalchemy session
     """
     logs = session.query(Logs).all()
     return LogsSchema().dump(logs, many=True)
 
-def create_route(session: Session, route: dict) -> Routes:
+def create_routes(routes: List[dict]) -> List[Routes]:
     """
-    Create a new route
+    Create new routes
 
-    :param session: sqlalchemy session
-    :param route: route schema
+    :param routes: list of route schema
     """
-    new_route = Routes(**route)
-    session.add(new_route)
+    new_routes = [
+        Routes(**route) for route in routes 
+        if not session.query(Routes).filter(Routes.url == route['url']).first()
+        ]
+    session.add_all(new_routes)
     session.commit()
-    return new_route
+    return new_routes
 
-def create_log(session: Session, log: dict) -> Logs:
+def create_log(log: dict) -> Logs:
     """
     Create a new log
 
-    :param session: sqlalchemy session
     :param log: log schema
     """
     new_log = Logs(**log)
@@ -58,11 +57,10 @@ def create_log(session: Session, log: dict) -> Logs:
     session.commit()
     return new_log
 
-def modify_route(session: Session, route: str, data: dict) -> Routes:
+def modify_route(route: str, data: dict) -> Routes:
     """
     Modify a route
 
-    :param session: sqlalchemy session
     :param route: route
     :param data: new route schema
     """
@@ -75,11 +73,10 @@ def modify_route(session: Session, route: str, data: dict) -> Routes:
     else:
         raise ValueError(f'Route {route} not found')
 
-def delete_route(session: Session, route: str) -> None:
+def delete_route(route: str) -> None:
     """
     Delete a route
 
-    :param session: sqlalchemy session
     :param route: route
     """
     route = session.query(Routes).filter(Routes.url == route).first()
