@@ -2,12 +2,8 @@ import pkg_resources
 from typing import List, Optional
 from flask import Flask, render_template
 from apscheduler.schedulers.background import BackgroundScheduler
-from sqlalchemy.orm import sessionmaker
 
 from .utils.cache import cache
-from .db import get_routes as _get_routes_
-from .db.engine import get_engine, create_tables
-from .utils.cron import background_log, get_logs
 
 class FlaskStatus:
     def __init__(self,
@@ -56,13 +52,12 @@ class FlaskStatus:
         app.template_folder = pkg_resources.resource_filename('flask_server_status', 'statsig/templates')
         app.static_folder   = pkg_resources.resource_filename('flask_server_status', 'statsig/static')
 
-        engine = get_engine(cache['SQLALCHEMY_DATABASE_URI'])
-        create_tables(engine)
-        session = sessionmaker(bind=engine)()
+        from .db import get_routes as _get_routes_
+        from .utils.cron import background_log, get_logs
 
         scheduler = BackgroundScheduler()
         scheduler.add_job(get_logs, 'interval', seconds=2)
-        scheduler.add_job(background_log, 'cron', args=[app, session, routes], minute='*')
+        scheduler.add_job(background_log, 'cron', args=[app, routes], minute='*')
         scheduler.start()
 
         if not hasattr(app, 'extensions'):
@@ -76,6 +71,6 @@ class FlaskStatus:
 
             This page shows all routes in the app and the logs
             """
-            response = _get_routes_(session, routes) if not cache.get('routes') else cache['routes']
+            response = _get_routes_(routes) if not cache.get('routes') else cache['routes']
             return render_template('index.html', response=response)
         return app
